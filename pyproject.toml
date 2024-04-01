@@ -1,0 +1,40 @@
+[tool.poetry]
+name = "imbue"
+version = "1.0.0"
+description = "Type based python dependency injection framework."
+authors = ["Gabriel Pajot <gab@lescactus.eu>"]
+license = "MIT"
+readme = "README.md"
+repository = "https://github.com/gpajot/imbue"
+include = ["imbue/py.typed"]
+
+[tool.poetry.dependencies]
+python = ">=3.8"
+
+[tool.poetry.group.test.dependencies]
+pytest = "==8.0.2"
+pytest-asyncio = "==0.23.5"
+pytest-mock = "==3.12.0"
+ruff = "==0.3.2"
+mypy = "==1.8.0"
+pre-commit = "==3.5.0"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+
+[tool.mypy]
+ignore_missing_imports = true
+install_types = true
+non_interactive = true
+check_untyped_defs = true
+
+[tool.ruff.lint]
+select = ["A", "B", "E", "F", "I", "PT"]
+ignore = ["E501"]
+
+[tool.ruff.lint.per-file-ignores]
+"__init__.py" = ["F401"]

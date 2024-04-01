@@ -1,0 +1,48 @@
+import threading
+from typing import Any, ContextManager, Dict
+
+from imbue.abc import InternalContainer
+from imbue.contexts.abc import ContextualizedContainer
+from imbue.contexts.base import Context, make_context_decorator
+from imbue.contexts.task import TaskContainer
+from imbue.contexts.thread import ThreadContainer
+from imbue.dependency import Interface
+
+application_context = make_context_decorator(Context.APPLICATION)
+
+
+class ApplicationContainer(ContextualizedContainer):
+    CONTEXT = Context.APPLICATION
+
+    def __init__(
+        self,
+        container: InternalContainer,
+        contextualized: Dict[Context, "ContextualizedContainer"],
+    ):
+        super().__init__(container, contextualized)
+        self._lock = threading.RLock()
+        self._locks: Dict[Interface, ContextManager] = {}
+
+    async def init(self) -> None:
+        await super().init()
+        # Init the main thread's container.
+        container = ThreadContainer(self._container, self._contextualized)
+        self._contextualized[container.CONTEXT] = container
+        await self.enter_async_context(container)
+
+    async def get(self, interface: Interface) -> Any:
+        if provided := self._provided.get(interface):
+            return provided
+        with self._lock:
+            if interface not in self._locks:
+                self._locks[interface] = threading.Lock()
+        with self._locks[interface]:
+            return await super().get(interface)
+
+    def thread_context(self) -> "ThreadContainer":
+        """Spawn registries for other thread."""
+        return ThreadContainer(self._container, self._contextualized)
+
+    def task_context(self) -> "TaskContainer":
+        """Spawn registries for each task."""
+        return TaskContainer(self._container, self._contextualized)
