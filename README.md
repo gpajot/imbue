@@ -47,9 +47,11 @@ container = Container(
 
 ...
 
+# The application context should be entered through the framework initialization.
 async with container.application_context() as app_container:
     a_dep = await app_container.get(ADep)
     ...
+    # The task context should be entered in each request.
     async with app_container.task_context() as task_container:
         b_dep = await task_container.get(BDep)
 ```
@@ -67,7 +69,7 @@ from typing import AsyncIterator
 
 from imbue import Package, application_context
 
-from myapp import LoggingConfig, LoggerTransportInterface, LoggerTransport, LoggerInterface, Logger
+from myapp import LoggingConfig, MyLoggerTransport, LoggerTransport, MyLogger, Logger
 
 class LoggingPackage(Package):
     def __init__(self, config: LoggingConfig):
@@ -75,14 +77,15 @@ class LoggingPackage(Package):
         
     @application_context(eager=True)  # You can autoload dependencies.
     # The method should expose the interface as the type and return the implementation.
-    def logger_transport(self) -> LoggerTransportInterface:
-        return LoggerTransport(self._config.transport)
+    def logger_transport(self) -> LoggerTransport:
+        return MyLoggerTransport(self._config.transport)
 
     @application_context
     # Sub dependencies should be required through their interface.
-    async def logger(self, transport: LoggerTransportInterface) -> AsyncIterator[LoggerInterface]:
+    async def logger(self, transport: LoggerTransport) -> AsyncIterator[Logger]:
         # Package methods also allow you to handle context managers.
-        async with Logger(transport, self._config.logger) as logger:
+        async with MyLogger(transport, self._config.logger) as logger:
+            # Using generators allow cleaning up resources when the context closes.
             yield logger
 ```
 
@@ -96,14 +99,14 @@ It's done via methods that can be:
 To declare the method returns a dependency, you simply choose the appropriate context and add the context decorator on the method.
 
 > 💡 Eager dependencies are instantiated as soon as we enter their context.
-> This is useful to configure globals (the transport in this example)
-> or if we want to make sure a dependency will use the main thread's event loop.
+> This is useful if we want to make sure a dependency will use the main thread's event loop.
 
 ##### Cleaning resources
 When you need to close resources you can do so via a generator.
 The generator should yield the dependency.
 
 > 💡 You should watch out for errors, if the context is closed handling an error, it will be raised in the generator.
+> In general you will want to simply supress the possible exception raised in the `yield` statement.
 
 #### Simple dependencies
 You can directly pass them to the container:
@@ -119,5 +122,3 @@ Container(
 )
 ```
 or if you want to include them in a `Package`, add them in `EXTRA_DEPENDENCIES`.
-
-> 💡 By default their context will be at the task level, which can be changed if needed.
