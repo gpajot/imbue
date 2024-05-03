@@ -100,7 +100,7 @@ class DelegatedProviderWrapper(Generic[V]):
     """
 
     func: Callable[..., Union[V, Iterator[V], AsyncIterator[V]]]
-    context: Context
+    context: Optional[Context]
     eager: bool
 
     def to_contextualized_provider(
@@ -135,7 +135,7 @@ class DelegatedProviderWrapper(Generic[V]):
         return self.func, False  # type: ignore[return-value]
 
 
-def make_context_decorator(context: Context):
+def make_context_decorator(context: Optional[Context]):
     """Wrap a delegated function providing an interface to assign a context and handle eagerness."""
 
     def _wrapper(func: Optional[Callable] = None, *, eager: bool = False):
@@ -150,3 +150,6 @@ def make_context_decorator(context: Context):
         return wrap(func)
 
     return _wrapper
+
+
+auto_context = make_context_decorator(None)

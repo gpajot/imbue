@@ -125,3 +125,7 @@ or if you want to include them in a `Package`, add them in `EXTRA_DEPENDENCIES`.
 > 💡 Whatever the method of adding dependencies,
 > non-contextualized ones will have the context automatically set based on sub-dependencies.
 > The lowest possible context will be used.
+
+## Integrations
+
+- [FastAPI](./imbue/fastapi/README.md)

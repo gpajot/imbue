@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "imbue"
-version = "2.0.0"
+version = "2.1.0"
 description = "Type based python dependency injection framework."
 authors = ["Gabriel Pajot <gab@lescactus.eu>"]
 license = "MIT"
@@ -10,6 +10,11 @@ include = ["imbue/py.typed"]
 
 [tool.poetry.dependencies]
 python = ">=3.8"
+
+fastapi = { version = ">=0.111,<2", optional = true }
+
+[tool.poetry.extras]
+fastapi = ["fastapi"]
 
 [tool.poetry.group.test.dependencies]
 pytest = "==8.2.0"
