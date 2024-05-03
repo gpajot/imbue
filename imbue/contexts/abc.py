@@ -4,7 +4,7 @@ from contextlib import (
     AbstractContextManager,
     AsyncExitStack,
 )
-from typing import Any, Callable, ClassVar, Dict, Type, TypeVar, overload
+from typing import Any, Callable, ClassVar, Dict, Type, TypeVar, cast, overload
 
 from imbue.abc import InternalContainer
 from imbue.contexts.base import Context, ContextualizedProvider
@@ -43,7 +43,9 @@ class ContextualizedContainer(AsyncExitStack, ABC):
     async def get(self, interface: Interface) -> Any:
         """Find the proper container based on context and provide."""
         provider = self._container.get_provider(interface)
-        return await self._contextualized[provider.context]._get_or_provide(provider)
+        return await self._contextualized[
+            cast(Context, provider.context)
+        ]._get_or_provide(provider)
 
     async def _get_or_provide(self, provider: ContextualizedProvider) -> Any:
         """Get from already provided or provide the dependency."""

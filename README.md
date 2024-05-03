@@ -106,7 +106,6 @@ When you need to close resources you can do so via a generator.
 The generator should yield the dependency.
 
 > 💡 You should watch out for errors, if the context is closed handling an error, it will be raised in the generator.
-> In general you will want to simply supress the possible exception raised in the `yield` statement.
 
 #### Simple dependencies
 You can directly pass them to the container:
@@ -122,3 +121,7 @@ Container(
 )
 ```
 or if you want to include them in a `Package`, add them in `EXTRA_DEPENDENCIES`.
+
+> 💡 Whatever the method of adding dependencies,
+> non-contextualized ones will have the context automatically set based on sub-dependencies.
+> The lowest possible context will be used.
