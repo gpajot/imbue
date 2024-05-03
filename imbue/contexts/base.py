@@ -42,7 +42,7 @@ V = TypeVar("V")
 @dataclass
 class ContextualizedDependency:
     dependency: Dependency
-    context: Context = Context.TASK
+    context: Optional[Context] = None
     eager: bool = False
 
     def get_providers(self) -> Iterator[ContextualizedProvider]:
@@ -58,14 +58,14 @@ class ContextualizedProvider(Generic[T, V]):
     """Wrap a provider to handle context and lifetime."""
 
     provider: Provider[T, V]
-    context: Context
+    context: Optional[Context]
     eager: bool
 
     @classmethod
     def from_dependency(
         cls,
         dependency: Dependency,
-        context: Context = Context.TASK,
+        context: Optional[Context] = None,
         eager: bool = False,
     ) -> Iterator["ContextualizedProvider"]:
         """In some cases, an interface yields multiple providers.

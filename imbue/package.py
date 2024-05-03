@@ -1,11 +1,12 @@
 import inspect
-from typing import ClassVar, Iterable, Iterator
+from typing import ClassVar, Iterable, Iterator, Union
 
 from imbue.contexts.base import (
     ContextualizedDependency,
     ContextualizedProvider,
     DelegatedProviderWrapper,
 )
+from imbue.dependency import Dependency
 
 
 class Package:
@@ -15,11 +16,16 @@ class Package:
     provider function is required in `EXTRA_DEPENDENCIES`.
     """
 
-    EXTRA_DEPENDENCIES: ClassVar[Iterable[ContextualizedDependency]] = ()
+    EXTRA_DEPENDENCIES: ClassVar[
+        Iterable[Union[Dependency, ContextualizedDependency]]
+    ] = ()
 
     def get_providers(self) -> Iterator[ContextualizedProvider]:
         for dependency in self.EXTRA_DEPENDENCIES:
-            yield from dependency.get_providers()
+            if isinstance(dependency, ContextualizedDependency):
+                yield from dependency.get_providers()
+            else:
+                yield from ContextualizedProvider.from_dependency(dependency)
         for _, member in inspect.getmembers(self):
             if not isinstance(member, DelegatedProviderWrapper):
                 continue

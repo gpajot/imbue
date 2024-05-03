@@ -1,6 +1,6 @@
 from collections import defaultdict
 from dataclasses import dataclass
-from typing import Dict, Iterator, List, Union
+from typing import Dict, Iterator, List, Union, cast
 
 from imbue.abc import InternalContainer
 from imbue.contexts.application import ApplicationContainer
@@ -28,11 +28,20 @@ class DependencyChain:
         # Check for cycles.
         if provider in self.chain:
             raise DependencyResolutionError(f"circular dependency found:\n{chain}")
+        return chain
+
+    def check(self) -> None:
+        if self.last.context is None:
+            raise DependencyResolutionError(
+                f"provider {self.last} does not have a context set"
+            )
+        # If previous context is not set, it will be done automatically so no check is required.
+        if len(self.chain) < 2 or self.chain[-2].context is None:
+            return
         # The deeper the chain, the lower the context must be.
         # App dependencies cannot have task dependencies but the inverse is possible.
-        if provider.context > self.last.context:
-            raise DependencyResolutionError(f"context error:\n{chain}")
-        return chain
+        if self.last.context > self.chain[-2].context:
+            raise DependencyResolutionError(f"context error:\n{self}")
 
     @property
     def last(self) -> ContextualizedProvider:
@@ -52,7 +61,6 @@ class Container(InternalContainer):
     def __init__(
         self,
         *dependencies_or_packages: Union[Dependency, ContextualizedDependency, Package],
-        default_dependency_context: Context = Context.TASK,
     ):
         # The link between an interface and its provider.
         self._providers: Dict[Interface, ContextualizedProvider] = {}
@@ -70,9 +78,7 @@ class Container(InternalContainer):
             if isinstance(dep_or_pkg, (ContextualizedDependency, Package)):
                 providers_iterator = dep_or_pkg.get_providers()
             else:
-                providers_iterator = ContextualizedProvider.from_dependency(
-                    dep_or_pkg, default_dependency_context
-                )
+                providers_iterator = ContextualizedProvider.from_dependency(dep_or_pkg)
             for provider in providers_iterator:
                 if provider.interface in self._providers:
                     raise DependencyResolutionError(
@@ -88,9 +94,11 @@ class Container(InternalContainer):
         """Construct the graph of sub dependencies."""
         provider = chain.last
         if provider.interface in self._sub_dependencies:
-            # Already handled.
+            # Already handled, we just need to check the full chain.
+            chain.check()
             return
         dependencies: List[SubDependency] = []
+        sub_providers: List[ContextualizedProvider] = []
         for sub_dependency in provider.sub_dependencies:
             if (
                 not sub_dependency.mandatory
@@ -102,8 +110,18 @@ class Container(InternalContainer):
                     f"no provider found for {sub_dependency.interface}, from provider {provider!r}",
                 )
             sub_provider = self._providers[sub_dependency.interface]
+            sub_providers.append(sub_provider)
             self._resolve(chain.add(sub_provider))
             dependencies.append(sub_dependency)
+        # Set the context automatically based on dependencies if not set.
+        # We want to set the lowest context possible.
+        if provider.context is None:
+            provider.context = (
+                max(cast(Context, s.context) for s in sub_providers)
+                if sub_providers
+                else Context.APPLICATION
+            )
+        chain.check()
         self._sub_dependencies[provider.interface] = dependencies
         if provider.eager:
             self._by_context_eager_providers[provider.context].append(provider)

@@ -67,3 +67,26 @@ class TestContainer:
     def test_resolve_check_contexts_ok(self, provider_int, package_int, package_str):
         provider_int.context = Context.APPLICATION
         Container(package_int, package_str)
+
+    def test_resolve_check_contexts_auto_with_deps(
+        self,
+        provider_str,
+        package_int,
+        package_str,
+    ):
+        provider_str.context = None
+        Container(package_int, package_str)
+        assert provider_str.context == Context.TASK
+
+    def test_resolve_check_contexts_auto_all(
+        self,
+        provider_int,
+        provider_str,
+        package_int,
+        package_str,
+    ):
+        provider_int.context = None
+        provider_str.context = None
+        Container(package_int, package_str)
+        assert provider_int.context == Context.APPLICATION
+        assert provider_str.context == Context.APPLICATION

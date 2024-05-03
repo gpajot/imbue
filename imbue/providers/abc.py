@@ -17,7 +17,7 @@ V = TypeVar("V")
 
 class Provider(Generic[T, V], ABC):
     """The foundation of dependency injection.
-    The role of the provider is to expose sub dependencies and provide the depdendencies given sub dependencies.
+    The role of the provider is to expose sub dependencies and provide the dependencies given sub dependencies.
     """
 
     def __init__(self, interface: T):
