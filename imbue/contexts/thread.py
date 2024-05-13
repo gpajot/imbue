@@ -1,8 +1,8 @@
 import asyncio
-from typing import Any, AsyncContextManager, Dict
+from typing import Any, AsyncContextManager, Callable, Dict, Type, overload
 
 from imbue.abc import InternalContainer
-from imbue.contexts.abc import ContextualizedContainer
+from imbue.contexts.abc import ContextualizedContainer, V
 from imbue.contexts.base import Context, make_context_decorator
 from imbue.contexts.task import TaskContainer
 from imbue.dependency import Interface
@@ -20,6 +20,14 @@ class ThreadContainer(ContextualizedContainer):
     ):
         super().__init__(container, contextualized)
         self._locks: Dict[Interface, AsyncContextManager] = {}
+
+    @overload
+    async def get(self, interface: Type[V]) -> V:
+        """Specific type annotation for classes."""
+
+    @overload
+    async def get(self, interface: Callable) -> Callable:
+        """Specific type annotation for functions."""
 
     async def get(self, interface: Interface) -> Any:
         if provided := self._provided.get(interface):
