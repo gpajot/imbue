@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "imbue"
-version = "2.1.0"
+version = "2.1.1"
 description = "Type based python dependency injection framework."
 authors = ["Gabriel Pajot <gab@lescactus.eu>"]
 license = "MIT"
