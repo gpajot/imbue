@@ -17,7 +17,7 @@ fastapi = { version = ">=0.111,<2", optional = true }
 fastapi = ["fastapi"]
 
 [tool.poetry.group.test.dependencies]
-pytest = "==8.2.1"
+pytest = "==8.2.2"
 pytest-asyncio = "==0.23.7"
 pytest-mock = "==3.14.0"
 ruff = "==0.4.7"
