@@ -31,12 +31,12 @@ class ApplicationContainer(ContextualizedContainer):
         await self.enter_async_context(container)
 
     @overload
-    async def get(self, interface: Type[V]) -> V:
-        """Specific type annotation for classes."""
-
-    @overload
     async def get(self, interface: Callable) -> Callable:
         """Specific type annotation for functions."""
+
+    @overload
+    async def get(self, interface: Type[V]) -> V:
+        """Specific type annotation for classes."""
 
     async def get(self, interface: Interface) -> Any:
         if provided := self._provided.get(interface):

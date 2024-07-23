@@ -33,12 +33,12 @@ class ContextualizedContainer(AsyncExitStack, ABC):
         self._provided: Dict[Interface, Any] = {}
 
     @overload
-    async def get(self, interface: Type[V]) -> V:
-        """Specific type annotation for classes."""
-
-    @overload
     async def get(self, interface: Callable) -> Callable:
         """Specific type annotation for functions."""
+
+    @overload
+    async def get(self, interface: Type[V]) -> V:
+        """Specific type annotation for classes."""
 
     async def get(self, interface: Interface) -> Any:
         """Find the proper container based on context and provide."""

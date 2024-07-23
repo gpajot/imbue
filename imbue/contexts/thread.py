@@ -22,12 +22,12 @@ class ThreadContainer(ContextualizedContainer):
         self._locks: Dict[Interface, AsyncContextManager] = {}
 
     @overload
-    async def get(self, interface: Type[V]) -> V:
-        """Specific type annotation for classes."""
-
-    @overload
     async def get(self, interface: Callable) -> Callable:
         """Specific type annotation for functions."""
+
+    @overload
+    async def get(self, interface: Type[V]) -> V:
+        """Specific type annotation for classes."""
 
     async def get(self, interface: Interface) -> Any:
         if provided := self._provided.get(interface):
