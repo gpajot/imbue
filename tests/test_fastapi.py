@@ -48,7 +48,7 @@ def container() -> Container:
     return Container(TestPackage())
 
 
-@pytest.fixture()
+@pytest.fixture
 def app(container: Container) -> FastAPI:
     return FastAPI(
         lifespan=app_lifespan(container),

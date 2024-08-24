@@ -60,22 +60,22 @@ async def async_func(
 # Providers.
 
 
-@pytest.fixture()
+@pytest.fixture
 def standalone_provider():
     return InstanceProvider(StandaloneDep)
 
 
-@pytest.fixture()
+@pytest.fixture
 def nested_provider():
     return InstanceProvider(NestedDep)
 
 
-@pytest.fixture()
+@pytest.fixture
 def interfaced_instance_provider():
     return InterfacedInstanceProvider(Interfaced(InterfaceDep, ImplementationDep))
 
 
-@pytest.fixture()
+@pytest.fixture
 def nested_generator_provider():
     def func(standalone: StandaloneDep) -> Iterator[NestedDep]:
         try:
@@ -86,7 +86,7 @@ def nested_generator_provider():
     return DelegatedInstanceProvider(contextmanager(func), True)
 
 
-@pytest.fixture()
+@pytest.fixture
 def nested_async_generator_provider():
     async def func(standalone: StandaloneDep) -> AsyncIterator[NestedDep]:
         try:
@@ -97,7 +97,7 @@ def nested_async_generator_provider():
     return DelegatedInstanceProvider(asynccontextmanager(func), True)
 
 
-@pytest.fixture()
+@pytest.fixture
 def nested_function_provider():
     def func(standalone: StandaloneDep) -> NestedDep:
         return NestedDep(standalone)
@@ -105,7 +105,7 @@ def nested_function_provider():
     return DelegatedInstanceProvider(func, False)
 
 
-@pytest.fixture()
+@pytest.fixture
 def nested_async_function_provider():
     async def func(standalone: StandaloneDep) -> NestedDep:
         return NestedDep(standalone)
@@ -113,26 +113,26 @@ def nested_async_function_provider():
     return DelegatedInstanceProvider(func, False)
 
 
-@pytest.fixture()
+@pytest.fixture
 def tasks_provider():
     return InstanceProvider(Tasks)
 
 
-@pytest.fixture()
+@pytest.fixture
 def async_meth_provider():
     return MethodProvider(Tasks.async_meth, Tasks)
 
 
-@pytest.fixture()
+@pytest.fixture
 def blocking_meth_provider():
     return MethodProvider(Tasks.blocking_meth, Tasks)
 
 
-@pytest.fixture()
+@pytest.fixture
 def async_func_provider():
     return FunctionProvider(async_func)
 
 
-@pytest.fixture()
+@pytest.fixture
 def blocking_func_provider():
     return FunctionProvider(blocking_func)

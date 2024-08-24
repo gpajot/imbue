@@ -105,18 +105,18 @@ def container(
     )
 
 
-@pytest.fixture()
+@pytest.fixture
 def application_container(container):
     return container.application_context()
 
 
-@pytest.fixture()
+@pytest.fixture
 async def thread_container(application_container):
     async with application_container:
         yield application_container.thread_context()
 
 
-@pytest.fixture()
+@pytest.fixture
 async def task_container(application_container):
     async with application_container:
         yield application_container.task_context()
