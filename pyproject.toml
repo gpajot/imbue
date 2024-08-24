@@ -11,7 +11,7 @@ include = ["imbue/py.typed"]
 [tool.poetry.dependencies]
 python = ">=3.8"
 
-fastapi = { version = ">=0.111,<2", optional = true }
+fastapi = { version = ">=0.112.1,<2", optional = true, extras = ["standard"] }
 
 [tool.poetry.extras]
 fastapi = ["fastapi"]
