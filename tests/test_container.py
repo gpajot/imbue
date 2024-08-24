@@ -8,7 +8,7 @@ from imbue.package import Package
 
 
 class TestContainer:
-    @pytest.fixture()
+    @pytest.fixture
     def provider_int(self, mocker):
         provider = mocker.Mock(spec=ContextualizedProvider)
         provider.interface = int
@@ -17,7 +17,7 @@ class TestContainer:
         provider.eager = False
         return provider
 
-    @pytest.fixture()
+    @pytest.fixture
     def provider_str(self, mocker):
         provider = mocker.Mock(spec=ContextualizedProvider)
         provider.interface = str
@@ -26,13 +26,13 @@ class TestContainer:
         provider.eager = False
         return provider
 
-    @pytest.fixture()
+    @pytest.fixture
     def package_int(self, mocker, provider_int):
         package = mocker.Mock(spec=Package)
         package.get_providers.return_value = [provider_int]
         return package
 
-    @pytest.fixture()
+    @pytest.fixture
     def package_str(self, mocker, provider_str):
         package = mocker.Mock(spec=Package)
         package.get_providers.return_value = [provider_str]

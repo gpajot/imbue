@@ -23,7 +23,7 @@ def func(standalone: StandaloneDep, arg: bool) -> Tuple[StandaloneDep, bool]:
     return standalone, arg
 
 
-@pytest.fixture()
+@pytest.fixture
 def container():
     container = Container()
     container.add(StandaloneDep, context=Context.APPLICATION)

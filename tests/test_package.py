@@ -11,7 +11,7 @@ from tests.conftest import StandaloneDep, async_func
 
 
 class TestPackage:
-    @pytest.fixture()
+    @pytest.fixture
     def package(self):
         class TheTestPackage(Package):
             EXTRA_DEPENDENCIES = [ContextualizedDependency(async_func, Context.THREAD)]

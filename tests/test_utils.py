@@ -7,7 +7,7 @@ from imbue.exceptions import DependencyError
 from imbue.utils import Annotation, extend, get_annotations, partial
 
 
-@pytest.fixture()
+@pytest.fixture
 def func():
     def f(a: int, b: str) -> str:
         return f"{a}-{b}"
@@ -15,7 +15,7 @@ def func():
     return f
 
 
-@pytest.fixture()
+@pytest.fixture
 def async_func():
     async def f(a: int, b: str) -> str:
         return f"{a}-{b}"
@@ -23,7 +23,7 @@ def async_func():
     return f
 
 
-@pytest.fixture()
+@pytest.fixture
 def variadic_func():
     def f(*args, **kwargs) -> str:
         return ""
