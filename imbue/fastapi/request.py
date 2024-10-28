@@ -1,21 +1,21 @@
 from typing import Any, AsyncIterator
 
-from fastapi import Request
 from fastapi.params import Depends
+from fastapi.requests import HTTPConnection
 from typing_extensions import Annotated
 
 from imbue.contexts.task import TaskContainer
 from imbue.dependency import Interface
 
 
-async def _task_container(request: Request) -> AsyncIterator[TaskContainer]:
+async def _task_container(connection: HTTPConnection) -> AsyncIterator[TaskContainer]:
     """Initialize the task container.
     This needs to be done for every request.
     For more details, see:
         - https://fastapi.tiangolo.com/tutorial/dependencies/global-dependencies/
         - https://fastapi.tiangolo.com/tutorial/dependencies/
     """
-    async with request.state.app_container.task_context() as container:
+    async with connection.state.app_container.task_context() as container:
         yield container
 
 
