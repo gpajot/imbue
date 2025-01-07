@@ -1,7 +1,7 @@
 # imbue
 
 [![tests](https://github.com/gpajot/imbue/actions/workflows/test.yml/badge.svg?branch=main&event=push)](https://github.com/gpajot/imbue/actions/workflows/test.yml?query=branch%3Amain+event%3Apush)
-[![version](https://img.shields.io/pypi/v/imbue?label=stable)](https://pypi.org/project/imbue/)
+[![PyPi](https://img.shields.io/pypi/v/imbue?label=stable)](https://pypi.org/project/imbue/)
 [![python](https://img.shields.io/pypi/pyversions/imbue)](https://pypi.org/project/imbue/)
 
 Type based python dependency injection framework.
@@ -56,7 +56,8 @@ async with container.application_context() as app_container:
         b_dep = await task_container.get(BDep)
 ```
 
-> 💡 A dependency can require other dependencies, the container will resolve the graph and raise errors if circular dependencies are found.
+> [!TIP]
+> A dependency can require other dependencies, the container will resolve the graph and raise errors if circular dependencies are found.
 
 ### In the details
 The packages provide the dependencies for the container, there are two ways of doing that.
@@ -98,14 +99,16 @@ It's done via methods that can be:
 
 To declare the method returns a dependency, you simply choose the appropriate context and add the context decorator on the method.
 
-> 💡 Eager dependencies are instantiated as soon as we enter their context.
+> [!TIP]
+> Eager dependencies are instantiated as soon as we enter their context.
 > This is useful if we want to make sure a dependency will use the main thread's event loop.
 
 ##### Cleaning resources
 When you need to close resources you can do so via a generator.
 The generator should yield the dependency.
 
-> 💡 You should watch out for errors, if the context is closed handling an error, it will be raised in the generator.
+> [!WARNING]
+> You should watch out for errors, if the context is closed handling an error, it will be raised in the generator.
 
 #### Simple dependencies
 You can directly pass them to the container:
@@ -122,7 +125,8 @@ Container(
 ```
 or if you want to include them in a `Package`, add them in `EXTRA_DEPENDENCIES`.
 
-> 💡 Whatever the method of adding dependencies,
+> [!NOTE]
+> Whatever the method of adding dependencies,
 > non-contextualized ones will have the context automatically set based on sub-dependencies.
 > The lowest possible context will be used.
 
