@@ -1,8 +1,8 @@
 import asyncio
 from typing import Any, AsyncContextManager, Callable, Dict, Type, overload
 
-from imbue.abc import InternalContainer
-from imbue.contexts.abc import ContextualizedContainer, V
+from imbue.abstract import InternalContainer
+from imbue.contexts.abstract import ContextualizedContainer, V
 from imbue.contexts.base import Context, make_context_decorator
 from imbue.contexts.task import TaskContainer
 from imbue.dependency import Interface

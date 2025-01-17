@@ -6,7 +6,7 @@ from contextlib import (
 )
 from typing import Any, Callable, ClassVar, Dict, Type, TypeVar, cast, overload
 
-from imbue.abc import InternalContainer
+from imbue.abstract import InternalContainer
 from imbue.contexts.base import Context, ContextualizedProvider
 from imbue.dependency import Interface
 from imbue.providers.instance import DelegatedInstanceProvider

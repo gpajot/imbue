@@ -20,7 +20,7 @@ from typing import (
 )
 
 from imbue.dependency import Dependency, SubDependency
-from imbue.providers.abc import Provider
+from imbue.providers.abstract import Provider
 from imbue.providers.common import get_providers
 from imbue.providers.instance import DelegatedInstanceProvider
 from imbue.utils import partial
