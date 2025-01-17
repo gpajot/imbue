@@ -13,7 +13,7 @@ from typing import (
 )
 
 from imbue.dependency import Interfaced, SubDependency
-from imbue.providers.abc import Provider
+from imbue.providers.abstract import Provider
 from imbue.utils import get_annotations
 
 C = TypeVar("C")

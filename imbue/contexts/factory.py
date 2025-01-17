@@ -1,6 +1,6 @@
 from typing import Any
 
-from imbue.contexts.abc import ContextualizedContainer
+from imbue.contexts.abstract import ContextualizedContainer
 from imbue.contexts.base import Context, ContextualizedProvider, make_context_decorator
 
 factory_context = make_context_decorator(Context.FACTORY)

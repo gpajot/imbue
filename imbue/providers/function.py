@@ -1,7 +1,7 @@
 from typing import Any, Callable, Iterator, Type
 
 from imbue.dependency import SubDependency
-from imbue.providers.abc import Provider
+from imbue.providers.abstract import Provider
 from imbue.utils import get_annotations, partial
 
 

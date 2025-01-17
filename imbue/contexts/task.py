@@ -1,4 +1,4 @@
-from imbue.contexts.abc import ContextualizedContainer
+from imbue.contexts.abstract import ContextualizedContainer
 from imbue.contexts.base import Context, make_context_decorator
 from imbue.contexts.factory import FactoryContainer
 

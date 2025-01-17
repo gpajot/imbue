@@ -2,7 +2,7 @@ from collections import defaultdict
 from dataclasses import dataclass
 from typing import Dict, Iterator, List, Union, cast
 
-from imbue.abc import InternalContainer
+from imbue.abstract import InternalContainer
 from imbue.contexts.application import ApplicationContainer
 from imbue.contexts.base import (
     Context,

@@ -3,7 +3,7 @@ from typing import Iterator
 
 from imbue.dependency import Dependency, Interfaced
 from imbue.exceptions import UnsupportedDependencyInterfaceError
-from imbue.providers.abc import Provider
+from imbue.providers.abstract import Provider
 from imbue.providers.function import (
     FunctionProvider,
     MethodProvider,
