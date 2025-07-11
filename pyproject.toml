@@ -11,12 +11,13 @@ include = ["imbue/py.typed"]
 [tool.poetry.dependencies]
 python = ">=3.9"
 
-fastapi = { version = ">=0.112.1,<2", optional = true, extras = ["standard"] }
+fastapi = { version = ">=0.112.1,<2", optional = true }
 
 [tool.poetry.extras]
 fastapi = ["fastapi"]
 
 [tool.poetry.group.test.dependencies]
+httpx = "==0.28.1"
 pytest = "==8.4.1"
 pytest-asyncio = "==1.0.0"
 pytest-mock = "==3.14.1"
