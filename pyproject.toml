@@ -1,20 +1,22 @@
-[tool.poetry]
+[project]
 name = "imbue"
 version = "2.1.2"
 description = "Type based python dependency injection framework."
-authors = ["Gabriel Pajot <gab@lescactus.eu>"]
-license = "MIT"
+license = { text = "MIT" }
 readme = "README.md"
-repository = "https://github.com/gpajot/imbue"
+requires-python = ">=3.9"
+authors = [
+    { name = "Gabriel Pajot", email = "gab@lescactus.eu" },
+]
+urls = { repository = "https://github.com/gpajot/imbue" }
+dependencies = []
+
+[project.optional-dependencies]
+fastapi = [ "fastapi >=0.112.1,<2" ]
+
+[tool.poetry]
 include = ["imbue/py.typed"]
-
-[tool.poetry.dependencies]
-python = ">=3.9"
-
-fastapi = { version = ">=0.112.1,<2", optional = true }
-
-[tool.poetry.extras]
-fastapi = ["fastapi"]
+requires-poetry = ">=2"
 
 [tool.poetry.group.test.dependencies]
 httpx = "==0.28.1"
@@ -25,22 +27,27 @@ ruff = "==0.12.11"
 mypy = "==1.17.1"
 pre-commit = "==4.3.0"
 
-[build-system]
-requires = ["poetry-core"]
-build-backend = "poetry.core.masonry.api"
-
 [tool.pytest.ini_options]
 asyncio_mode = "auto"
 
 [tool.mypy]
+check_untyped_defs = true
 ignore_missing_imports = true
 install_types = true
 non_interactive = true
-check_untyped_defs = true
+warn_redundant_casts = true
+warn_unused_ignores = true
+plugins = ["pydantic.mypy"]
 
 [tool.ruff.lint]
 select = ["A", "B", "E", "F", "I", "PT"]
 ignore = ["E501"]
+per-file-ignores = { "__init__.py" = ["F401"] }
 
-[tool.ruff.lint.per-file-ignores]
-"__init__.py" = ["F401"]
+[tool.pydantic-mypy]
+init_forbid_extra = true
+init_typed = true
+warn_untyped_fields = true
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
