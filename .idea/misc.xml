@@ -8,5 +8,5 @@
     <option name="pathToExecutable" value="$USER_HOME$/Library/Caches/pypoetry/virtualenvs/imbue-KzZXrERr-py3.11/bin/ruff" />
     <option name="sdkName" value="Poetry (imbue)" />
   </component>
-  <component name="ProjectRootManager" version="2" project-jdk-name="Poetry (imbue)" project-jdk-type="Python SDK" />
+  <component name="ProjectRootManager" version="2" project-jdk-name="uv (imbue)" project-jdk-type="Python SDK" />
 </project>
