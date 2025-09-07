@@ -1,6 +1,6 @@
 [project]
 name = "imbue"
-version = "2.1.2"
+version = "2.1.3"
 description = "Type based python dependency injection framework."
 license = "MIT"
 readme = "README.md"
@@ -32,8 +32,6 @@ asyncio_mode = "auto"
 [tool.mypy]
 check_untyped_defs = true
 ignore_missing_imports = true
-install_types = true
-non_interactive = true
 warn_redundant_casts = true
 warn_unused_ignores = true
 plugins = ["pydantic.mypy"]
