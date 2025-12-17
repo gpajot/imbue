@@ -1,12 +1,9 @@
 import functools
 import inspect
+from collections.abc import Callable
 from dataclasses import dataclass
 from typing import (
     Any,
-    Callable,
-    Dict,
-    Optional,
-    Set,
     get_type_hints,
 )
 
@@ -23,7 +20,7 @@ def get_annotations(
     func: Callable,
     with_return: bool = True,
     with_instance: bool = True,
-) -> Dict[str, Annotation]:
+) -> dict[str, Annotation]:
     """Wrapper around signature and get_type_hints functions.
     Note: variadic and positional only parameters are excluded as those make injection risky.
     """
@@ -74,7 +71,7 @@ def partial(func: Callable, **kwargs: Any) -> Callable:
         k: v.annotation for k, v in get_annotations(func).items() if k not in kwargs
     }
     signature = inspect.signature(func)
-    _wrapper.__signature__ = signature.replace(  # type: ignore[attr-defined]
+    _wrapper.__signature__ = signature.replace(  # ty: ignore[unresolved-attribute]
         parameters=[p for p in signature.parameters.values() if p.name not in kwargs],
     )
     return _wrapper
@@ -83,13 +80,13 @@ def partial(func: Callable, **kwargs: Any) -> Callable:
 def extend(
     func: Callable,
     remove_instance: bool = False,
-    remove: Optional[Set[str]] = None,
+    remove: set[str] | None = None,
 ) -> Callable:
     """Decorator to extend function in order to add parameters and fix signature.
     Note: this is just smoke to allow programmatically parsing the signature.
     Parameters should be added first, and have a name with no risk to collide with existing parameters.
     """
-    remove_params: Set[str] = remove or set()
+    remove_params: set[str] = remove or set()
     if remove_instance:
         remove_params.add("self")
 
@@ -110,7 +107,7 @@ def extend(
             _wrapped.__annotations__.pop(name, None)
 
         signature = inspect.signature(func)
-        _wrapped.__signature__ = signature.replace(  # type: ignore[attr-defined]
+        _wrapped.__signature__ = signature.replace(  # ty: ignore[unresolved-attribute]
             parameters=[
                 inspect.Parameter(
                     n,

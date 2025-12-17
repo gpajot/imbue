@@ -1,5 +1,7 @@
 import asyncio
-from typing import Any, AsyncContextManager, Callable, Dict, Type, overload
+from collections.abc import Callable
+from contextlib import AbstractAsyncContextManager
+from typing import Any, overload
 
 from imbue.abstract import InternalContainer
 from imbue.contexts.abstract import ContextualizedContainer, V
@@ -16,17 +18,17 @@ class ThreadContainer(ContextualizedContainer):
     def __init__(
         self,
         container: InternalContainer,
-        contextualized: Dict[Context, "ContextualizedContainer"],
+        contextualized: dict[Context, "ContextualizedContainer"],
     ):
         super().__init__(container, contextualized)
-        self._locks: Dict[Interface, AsyncContextManager] = {}
+        self._locks: dict[Interface, AbstractAsyncContextManager] = {}
 
     @overload
     async def get(self, interface: Callable) -> Callable:
         """Specific type annotation for functions."""
 
     @overload
-    async def get(self, interface: Type[V]) -> V:
+    async def get(self, interface: type[V]) -> V:
         """Specific type annotation for classes."""
 
     async def get(self, interface: Interface) -> Any:

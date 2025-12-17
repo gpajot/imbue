@@ -1,7 +1,7 @@
 from abc import ABC
+from collections.abc import AsyncIterator, Iterator
 from contextlib import asynccontextmanager, contextmanager
 from dataclasses import dataclass
-from typing import AsyncIterator, Iterator, Tuple
 
 import pytest
 
@@ -39,21 +39,21 @@ class ImplementationDep(InterfaceDep):
 class Tasks:
     standalone: StandaloneDep
 
-    def blocking_meth(self, arg: bool) -> Tuple[StandaloneDep, bool]:
+    def blocking_meth(self, arg: bool) -> tuple[StandaloneDep, bool]:
         return self.standalone, arg
 
-    async def async_meth(self, arg: bool) -> Tuple[StandaloneDep, bool]:
+    async def async_meth(self, arg: bool) -> tuple[StandaloneDep, bool]:
         return self.standalone, arg
 
 
-def blocking_func(standalone: StandaloneDep, arg: bool) -> Tuple[StandaloneDep, bool]:
+def blocking_func(standalone: StandaloneDep, arg: bool) -> tuple[StandaloneDep, bool]:
     return standalone, arg
 
 
 async def async_func(
     standalone: StandaloneDep,
     arg: bool,
-) -> Tuple[StandaloneDep, bool]:
+) -> tuple[StandaloneDep, bool]:
     return standalone, arg
 
 
@@ -72,7 +72,7 @@ def nested_provider():
 
 @pytest.fixture
 def interfaced_instance_provider():
-    return InterfacedInstanceProvider(Interfaced(InterfaceDep, ImplementationDep))
+    return InterfacedInstanceProvider(Interfaced(InterfaceDep, ImplementationDep))  # ty: ignore[invalid-argument-type]
 
 
 @pytest.fixture

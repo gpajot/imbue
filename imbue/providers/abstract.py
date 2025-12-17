@@ -1,12 +1,10 @@
 from abc import ABC, abstractmethod
+from collections.abc import Iterator
+from contextlib import AbstractAsyncContextManager, AbstractContextManager
 from typing import (
     Any,
-    AsyncContextManager,
-    ContextManager,
     Generic,
-    Iterator,
     TypeVar,
-    Union,
 )
 
 from imbue.dependency import SubDependency
@@ -32,7 +30,7 @@ class Provider(Generic[T, V], ABC):
     async def get(
         self,
         **dependencies: Any,
-    ) -> Union[V, ContextManager[V], AsyncContextManager[V]]:
+    ) -> V | AbstractContextManager[V] | AbstractAsyncContextManager[V]:
         """Provide the dependency for the interface."""
 
     def __repr__(self) -> str:

@@ -1,10 +1,10 @@
+from collections.abc import AsyncIterator
 from dataclasses import dataclass, field
-from typing import AsyncIterator, cast
+from typing import Annotated, cast
 
 import pytest
 from fastapi import FastAPI
 from starlette.testclient import TestClient
-from typing_extensions import Annotated
 
 from imbue import (
     Container,

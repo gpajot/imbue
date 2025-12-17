@@ -1,10 +1,11 @@
 from abc import ABC
+from collections.abc import Callable
 from contextlib import (
     AbstractAsyncContextManager,
     AbstractContextManager,
     AsyncExitStack,
 )
-from typing import Any, Callable, ClassVar, Dict, Type, TypeVar, cast, overload
+from typing import Any, ClassVar, TypeVar, cast, overload
 
 from imbue.abstract import InternalContainer
 from imbue.contexts.base import Context, ContextualizedProvider
@@ -24,20 +25,20 @@ class ContextualizedContainer(AsyncExitStack, ABC):
     def __init__(
         self,
         container: InternalContainer,
-        contextualized: Dict[Context, "ContextualizedContainer"],
+        contextualized: dict[Context, "ContextualizedContainer"],
     ):
         super().__init__()
         self._container = container
         self._contextualized = dict(contextualized)
         self._contextualized[self.CONTEXT] = self
-        self._provided: Dict[Interface, Any] = {}
+        self._provided: dict[Interface, Any] = {}
 
     @overload
     async def get(self, interface: Callable) -> Callable:
         """Specific type annotation for functions."""
 
     @overload
-    async def get(self, interface: Type[V]) -> V:
+    async def get(self, interface: type[V]) -> V:
         """Specific type annotation for classes."""
 
     async def get(self, interface: Interface) -> Any:

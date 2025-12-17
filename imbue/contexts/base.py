@@ -1,22 +1,19 @@
 from __future__ import annotations
 
 import inspect
-from contextlib import asynccontextmanager, contextmanager
+from collections.abc import AsyncIterator, Callable, Iterator
+from contextlib import (
+    AbstractAsyncContextManager,
+    AbstractContextManager,
+    asynccontextmanager,
+    contextmanager,
+)
 from dataclasses import dataclass
 from enum import IntEnum
 from typing import (
     Any,
-    AsyncContextManager,
-    AsyncIterator,
-    Callable,
-    ContextManager,
     Generic,
-    Iterator,
-    Optional,
-    Tuple,
-    Type,
     TypeVar,
-    Union,
 )
 
 from imbue.dependency import Dependency, SubDependency
@@ -42,7 +39,7 @@ V = TypeVar("V")
 @dataclass
 class ContextualizedDependency:
     dependency: Dependency
-    context: Optional[Context] = None
+    context: Context | None = None
     eager: bool = False
 
     def get_providers(self) -> Iterator[ContextualizedProvider]:
@@ -58,16 +55,16 @@ class ContextualizedProvider(Generic[T, V]):
     """Wrap a provider to handle context and lifetime."""
 
     provider: Provider[T, V]
-    context: Optional[Context]
+    context: Context | None
     eager: bool
 
     @classmethod
     def from_dependency(
         cls,
         dependency: Dependency,
-        context: Optional[Context] = None,
+        context: Context | None = None,
         eager: bool = False,
-    ) -> Iterator["ContextualizedProvider"]:
+    ) -> Iterator[ContextualizedProvider]:
         """In some cases, an interface yields multiple providers.
         Ex: a method yields a provider for a class and one for the method.
         """
@@ -89,7 +86,7 @@ class ContextualizedProvider(Generic[T, V]):
     async def get(
         self,
         **dependencies: Any,
-    ) -> Union[V, ContextManager[V], AsyncContextManager[V]]:
+    ) -> V | AbstractContextManager[V] | AbstractAsyncContextManager[V]:
         return await self.provider.get(**dependencies)
 
 
@@ -99,14 +96,14 @@ class DelegatedProviderWrapper(Generic[V]):
     Its purpose is to wait until we have an instance to pass to the method.
     """
 
-    func: Callable[..., Union[V, Iterator[V], AsyncIterator[V]]]
-    context: Optional[Context]
+    func: Callable[..., V | Iterator[V] | AsyncIterator[V]]
+    context: Context | None
     eager: bool
 
     def to_contextualized_provider(
         self,
         instance: Any,
-    ) -> ContextualizedProvider[Type[V], V]:
+    ) -> ContextualizedProvider[type[V], V]:
         """Get the provider from this wrapper."""
         func, is_context_manager = self._get_func()
         return ContextualizedProvider(
@@ -120,25 +117,25 @@ class DelegatedProviderWrapper(Generic[V]):
 
     def _get_func(
         self,
-    ) -> Tuple[
+    ) -> tuple[
         Callable[
             ...,
-            Union[V, ContextManager[V], AsyncContextManager[V]],
+            V | AbstractContextManager[V] | AbstractAsyncContextManager[V],
         ],
         bool,
     ]:
         """Support for context managers."""
         if inspect.isasyncgenfunction(self.func):
-            return asynccontextmanager(self.func), True
+            return asynccontextmanager(self.func), True  # ty: ignore[invalid-argument-type]
         if inspect.isgeneratorfunction(self.func):
-            return contextmanager(self.func), True
-        return self.func, False  # type: ignore[return-value]
+            return contextmanager(self.func), True  # ty: ignore[invalid-argument-type]
+        return self.func, False  # ty: ignore[invalid-return-type]
 
 
-def make_context_decorator(context: Optional[Context]):
+def make_context_decorator(context: Context | None):
     """Wrap a delegated function providing an interface to assign a context and handle eagerness."""
 
-    def _wrapper(func: Optional[Callable] = None, *, eager: bool = False):
+    def _wrapper(func: Callable | None = None, *, eager: bool = False):
         def wrap(fn: Callable) -> DelegatedProviderWrapper:
             return DelegatedProviderWrapper(func=fn, context=context, eager=eager)
 

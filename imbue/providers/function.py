@@ -1,4 +1,5 @@
-from typing import Any, Callable, Iterator, Type
+from collections.abc import Callable, Iterator
+from typing import Any
 
 from imbue.dependency import SubDependency
 from imbue.providers.abstract import Provider
@@ -26,7 +27,7 @@ class FunctionProvider(Provider[Callable, Callable]):
 class MethodProvider(Provider[Callable, Callable]):
     """The class is instantiated with dependencies and the bound method is returned."""
 
-    def __init__(self, func: Callable, cls: Type):
+    def __init__(self, func: Callable, cls: type):
         super().__init__(func)
         self._cls = cls
 
@@ -46,4 +47,4 @@ class MethodProvider(Provider[Callable, Callable]):
 
     async def get(self, **dependencies: Any) -> Callable:
         instance = dependencies.pop("__instance__")
-        return partial(getattr(instance, self.interface.__name__), **dependencies)
+        return partial(getattr(instance, self.interface.__name__), **dependencies)  # ty: ignore[unresolved-attribute]

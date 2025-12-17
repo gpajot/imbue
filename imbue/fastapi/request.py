@@ -1,8 +1,8 @@
-from typing import Any, AsyncIterator
+from collections.abc import AsyncIterator
+from typing import Annotated, Any
 
 from fastapi.params import Depends
 from fastapi.requests import HTTPConnection
-from typing_extensions import Annotated
 
 from imbue.contexts.task import TaskContainer
 from imbue.dependency import Interface
