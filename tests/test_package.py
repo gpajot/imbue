@@ -1,3 +1,5 @@
+from typing import ClassVar
+
 import pytest
 
 from imbue.contexts.base import (
@@ -14,7 +16,9 @@ class TestPackage:
     @pytest.fixture
     def package(self):
         class TheTestPackage(Package):
-            EXTRA_DEPENDENCIES = [ContextualizedDependency(async_func, Context.THREAD)]
+            EXTRA_DEPENDENCIES: ClassVar[list[ContextualizedDependency]] = [
+                ContextualizedDependency(async_func, Context.THREAD)
+            ]
 
             @thread_context
             def provide_method(self) -> StandaloneDep:

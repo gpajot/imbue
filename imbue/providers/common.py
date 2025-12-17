@@ -1,5 +1,5 @@
 import inspect
-from typing import Iterator
+from collections.abc import Iterator
 
 from imbue.dependency import Dependency, Interfaced
 from imbue.exceptions import UnsupportedDependencyInterfaceError
@@ -17,12 +17,12 @@ from imbue.providers.instance import (
 def get_providers(dependency: Dependency) -> Iterator[Provider]:
     """Get the providers or raise if incorect type."""
     if isinstance(dependency, Interfaced):
-        yield InterfacedInstanceProvider(dependency)
+        yield InterfacedInstanceProvider(dependency)  # ty: ignore[invalid-argument-type]
     elif inspect.isclass(dependency):
         yield InstanceProvider(dependency)
     elif inspect.iscoroutinefunction(dependency) or inspect.isfunction(dependency):
         # Determine if it's a method of function.
-        func_names = dependency.__qualname__.split(".")
+        func_names = dependency.__qualname__.split(".")  # ty: ignore[unresolved-attribute]
         if len(func_names) == 2:
             cls = getattr(
                 inspect.getmodule(dependency),

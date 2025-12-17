@@ -1,5 +1,4 @@
 from dataclasses import dataclass
-from typing import Tuple
 
 import pytest
 
@@ -12,14 +11,14 @@ from tests.conftest import StandaloneDep
 class Tasks:
     standalone: StandaloneDep
 
-    def a(self, arg: bool) -> Tuple["Tasks", bool]:
+    def a(self, arg: bool) -> tuple["Tasks", bool]:
         return self, arg
 
-    def b(self, arg: bool) -> Tuple["Tasks", bool]:
+    def b(self, arg: bool) -> tuple["Tasks", bool]:
         return self, arg
 
 
-def func(standalone: StandaloneDep, arg: bool) -> Tuple[StandaloneDep, bool]:
+def func(standalone: StandaloneDep, arg: bool) -> tuple[StandaloneDep, bool]:
     return standalone, arg
 
 

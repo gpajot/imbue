@@ -1,7 +1,8 @@
+from collections.abc import Callable
 from dataclasses import dataclass
-from typing import Callable, Generic, Type, TypeVar, Union
+from typing import Generic, TypeVar
 
-Interface = Union[Type, Callable]
+Interface = type | Callable
 
 
 @dataclass
@@ -39,4 +40,4 @@ class Interfaced(Generic[T]):
     implementation: T
 
 
-Dependency = Union[Interface, Interfaced]
+Dependency = Interface | Interfaced

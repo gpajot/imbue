@@ -1,5 +1,7 @@
 import threading
-from typing import Any, Callable, ContextManager, Dict, Type, overload
+from collections.abc import Callable
+from contextlib import AbstractContextManager
+from typing import Any, overload
 
 from imbue.abstract import InternalContainer
 from imbue.contexts.abstract import ContextualizedContainer, V
@@ -17,11 +19,11 @@ class ApplicationContainer(ContextualizedContainer):
     def __init__(
         self,
         container: InternalContainer,
-        contextualized: Dict[Context, "ContextualizedContainer"],
+        contextualized: dict[Context, "ContextualizedContainer"],
     ):
         super().__init__(container, contextualized)
         self._lock = threading.RLock()
-        self._locks: Dict[Interface, ContextManager] = {}
+        self._locks: dict[Interface, AbstractContextManager] = {}
 
     async def init(self) -> None:
         await super().init()
@@ -35,7 +37,7 @@ class ApplicationContainer(ContextualizedContainer):
         """Specific type annotation for functions."""
 
     @overload
-    async def get(self, interface: Type[V]) -> V:
+    async def get(self, interface: type[V]) -> V:
         """Specific type annotation for classes."""
 
     async def get(self, interface: Interface) -> Any:

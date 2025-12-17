@@ -1,6 +1,7 @@
 from collections import defaultdict
+from collections.abc import Iterator
 from dataclasses import dataclass
-from typing import Dict, Iterator, List, Union, cast
+from typing import cast
 
 from imbue.abstract import InternalContainer
 from imbue.contexts.application import ApplicationContainer
@@ -20,7 +21,7 @@ class DependencyChain:
     Its role is to check whether there are no cycles nor context issues.
     """
 
-    chain: List[ContextualizedProvider]
+    chain: list[ContextualizedProvider]
 
     def add(self, provider: ContextualizedProvider) -> "DependencyChain":
         """Create a new chain, adding the provider at the end."""
@@ -40,7 +41,7 @@ class DependencyChain:
             return
         # The deeper the chain, the lower the context must be.
         # App dependencies cannot have task dependencies but the inverse is possible.
-        if self.last.context > self.chain[-2].context:
+        if self.last.context > self.chain[-2].context:  # ty: ignore[unsupported-operator]
             raise DependencyResolutionError(f"context error:\n{self}")
 
     @property
@@ -60,15 +61,15 @@ class DependencyChain:
 class Container(InternalContainer):
     def __init__(
         self,
-        *dependencies_or_packages: Union[Dependency, ContextualizedDependency, Package],
+        *dependencies_or_packages: Dependency | ContextualizedDependency | Package,
     ):
         # The link between an interface and its provider.
-        self._providers: Dict[Interface, ContextualizedProvider] = {}
+        self._providers: dict[Interface, ContextualizedProvider] = {}
         # Cache sub dependencies for each interface.
-        self._sub_dependencies: Dict[Interface, List[SubDependency]] = {}
+        self._sub_dependencies: dict[Interface, list[SubDependency]] = {}
         # All providers that should be eager inited.
-        self._by_context_eager_providers: Dict[
-            Context, List[ContextualizedProvider]
+        self._by_context_eager_providers: dict[
+            Context, list[ContextualizedProvider]
         ] = defaultdict(
             list,
         )
@@ -97,8 +98,8 @@ class Container(InternalContainer):
             # Already handled, we just need to check the full chain.
             chain.check()
             return
-        dependencies: List[SubDependency] = []
-        sub_providers: List[ContextualizedProvider] = []
+        dependencies: list[SubDependency] = []
+        sub_providers: list[ContextualizedProvider] = []
         for sub_dependency in provider.sub_dependencies:
             if (
                 not sub_dependency.mandatory
