@@ -1,16 +1,34 @@
 from abc import ABC, abstractmethod
-from collections.abc import Iterator
+from collections.abc import Awaitable, Iterator
 from contextlib import AbstractAsyncContextManager, AbstractContextManager
+from dataclasses import dataclass
 from typing import (
     Any,
+    Final,
     Generic,
+    Literal,
+    TypeAlias,
     TypeVar,
 )
 
 from imbue.dependency import SubDependency
 
 T = TypeVar("T")
-V = TypeVar("V")
+V = TypeVar("V", covariant=True)
+A = TypeVar("A", bound=bool)
+
+Provided: TypeAlias = V | AbstractContextManager[V] | AbstractAsyncContextManager[V]
+
+
+@dataclass(frozen=True)
+class _ProviderResult(Generic[V, A]):
+    provided: Final[V | Awaitable[V]]
+    awaitable: Final[A]
+
+
+ProviderResult: TypeAlias = _ProviderResult[V, Literal[False]]
+AsyncProviderResult: TypeAlias = _ProviderResult[Awaitable[V], Literal[True]]
+AnyProviderResult: TypeAlias = ProviderResult[V] | AsyncProviderResult[V]
 
 
 class Provider(Generic[T, V], ABC):
@@ -27,10 +45,7 @@ class Provider(Generic[T, V], ABC):
         """Get the dependencies from the interface."""
 
     @abstractmethod
-    async def get(
-        self,
-        **dependencies: Any,
-    ) -> V | AbstractContextManager[V] | AbstractAsyncContextManager[V]:
+    def get(self, **dependencies: Any) -> AnyProviderResult[Provided[V]]:
         """Provide the dependency for the interface."""
 
     def __repr__(self) -> str:

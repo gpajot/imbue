@@ -4,9 +4,13 @@ from contextlib import AbstractAsyncContextManager
 from typing import Any, overload
 
 from imbue.abstract import InternalContainer
-from imbue.contexts.abstract import ContextualizedContainer, V
+from imbue.contexts.abstract import (
+    ContextualizedContainer,
+    SyncContextualizedContainer,
+    V,
+)
 from imbue.contexts.base import Context, make_context_decorator
-from imbue.contexts.task import TaskContainer
+from imbue.contexts.task import SyncTaskContainer, TaskContainer
 from imbue.dependency import Interface
 
 thread_context = make_context_decorator(Context.THREAD)
@@ -42,3 +46,11 @@ class ThreadContainer(ContextualizedContainer):
     def task_context(self) -> "TaskContainer":
         """Spawn registries for each task."""
         return TaskContainer(self._container, self._contextualized)
+
+
+class SyncThreadContainer(SyncContextualizedContainer):
+    CONTEXT = Context.THREAD
+
+    def task_context(self) -> SyncTaskContainer:
+        """Spawn registries for each task."""
+        return SyncTaskContainer(self._container, self._contextualized)

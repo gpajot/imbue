@@ -1,6 +1,6 @@
-from collections.abc import AsyncIterator, Awaitable, Callable
+from collections.abc import AsyncIterator, Awaitable, Callable, Iterator
 from dataclasses import dataclass, field
-from unittest.mock import AsyncMock
+from unittest.mock import AsyncMock, Mock
 
 import pytest
 
@@ -38,12 +38,32 @@ class CMTaskDep(CMApplicationDep): ...
 class CMFactoryDep(CMApplicationDep): ...
 
 
+@dataclass
+class CMSyncApplicationDep:
+    close: Callable = field(default_factory=Mock)
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        self.close()
+
+
+class CMSyncThreadDep(CMSyncApplicationDep): ...
+
+
+class CMSyncTaskDep(CMSyncApplicationDep): ...
+
+
+class CMSyncFactoryDep(CMSyncApplicationDep): ...
+
+
 @pytest.fixture(scope="session")
 def cm_application_package():
     class AppPackage(Package):
         @application_context(eager=True)
-        async def dep(self, _: InnerAppDep) -> AsyncIterator[CMApplicationDep]:
-            async with CMApplicationDep() as dep:
+        def sync_dep(self, _: InnerAppDep) -> Iterator[CMSyncApplicationDep]:
+            with CMSyncApplicationDep() as dep:
                 yield dep
 
         @application_context
@@ -62,6 +82,11 @@ def cm_thread_package():
                 yield dep
 
         @thread_context
+        def sync_dep(self, _: InnerThreadDep) -> Iterator[CMSyncThreadDep]:
+            with CMSyncThreadDep() as dep:
+                yield dep
+
+        @thread_context
         def inner(self) -> InnerThreadDep:
             return InnerThreadDep()
 
@@ -76,6 +101,11 @@ def cm_task_package():
             async with CMTaskDep() as dep:
                 yield dep
 
+        @task_context
+        def sync_dep(self) -> Iterator[CMSyncTaskDep]:
+            with CMSyncTaskDep() as dep:
+                yield dep
+
     return TaskPackage()
 
 
@@ -85,6 +115,11 @@ def cm_factory_package():
         @factory_context
         async def dep(self) -> AsyncIterator[CMFactoryDep]:
             async with CMFactoryDep() as dep:
+                yield dep
+
+        @factory_context
+        def sync_dep(self) -> Iterator[CMSyncFactoryDep]:
+            with CMSyncFactoryDep() as dep:
                 yield dep
 
     return FactoryPackage()
@@ -103,20 +138,3 @@ def container(
         cm_task_package,
         cm_factory_package,
     )
-
-
-@pytest.fixture
-def application_container(container):
-    return container.application_context()
-
-
-@pytest.fixture
-async def thread_container(application_container):
-    async with application_container:
-        yield application_container.thread_context()
-
-
-@pytest.fixture
-async def task_container(application_container):
-    async with application_container:
-        yield application_container.task_context()

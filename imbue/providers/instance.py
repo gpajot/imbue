@@ -1,6 +1,5 @@
 import inspect
 from collections.abc import Callable, Iterator
-from contextlib import AbstractAsyncContextManager, AbstractContextManager
 from typing import (
     Any,
     Generic,
@@ -9,7 +8,13 @@ from typing import (
 )
 
 from imbue.dependency import Interfaced, SubDependency
-from imbue.providers.abstract import Provider
+from imbue.providers.abstract import (
+    AsyncProviderResult,
+    Provided,
+    Provider,
+    ProviderResult,
+    _ProviderResult,
+)
 from imbue.utils import get_annotations
 
 C = TypeVar("C")
@@ -27,8 +32,8 @@ class InstanceProvider(Provider[type[C], C], Generic[C]):
         ).items():
             yield SubDependency(name, annotation.annotation, annotation.mandatory)
 
-    async def get(self, **dependencies: Any) -> C:
-        return self.interface(**dependencies)
+    def get(self, **dependencies: Any) -> ProviderResult[C]:
+        return _ProviderResult(self.interface(**dependencies), awaitable=False)
 
 
 class InterfacedInstanceProvider(Provider[type[C], C], Generic[C]):
@@ -47,8 +52,8 @@ class InterfacedInstanceProvider(Provider[type[C], C], Generic[C]):
         ).items():
             yield SubDependency(name, annotation.annotation, annotation.mandatory)
 
-    async def get(self, **dependencies: Any) -> C:
-        return self.implementation(**dependencies)
+    def get(self, **dependencies: Any) -> ProviderResult[C]:
+        return _ProviderResult(self.implementation(**dependencies), awaitable=False)
 
 
 class DelegatedInstanceProvider(Provider[type[C], C], Generic[C]):
@@ -56,10 +61,7 @@ class DelegatedInstanceProvider(Provider[type[C], C], Generic[C]):
 
     def __init__(
         self,
-        provider_func: Callable[
-            ...,
-            C | AbstractContextManager[C] | AbstractAsyncContextManager[C],
-        ],
+        provider_func: Callable[..., Provided[C]],
         is_context_manager: bool,
     ):
         self._provider_func = provider_func
@@ -88,10 +90,8 @@ class DelegatedInstanceProvider(Provider[type[C], C], Generic[C]):
         ).items():
             yield SubDependency(name, annotation.annotation, annotation.mandatory)
 
-    async def get(
-        self,
-        **dependencies: Any,
-    ) -> C | AbstractContextManager[C] | AbstractAsyncContextManager[C]:
-        if self._awaitable:
-            return await self._provider_func(**dependencies)  # ty: ignore[invalid-await]
-        return self._provider_func(**dependencies)
+    def get(self, **dependencies: Any) -> AsyncProviderResult[Provided[C]]:
+        return _ProviderResult(
+            self._provider_func(**dependencies),  # ty: ignore[invalid-argument-type]
+            awaitable=self._awaitable,
+        )
