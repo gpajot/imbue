@@ -1,6 +1,6 @@
 [project]
 name = "imbue"
-version = "2.3.0"
+version = "2.2.0"
 description = "Type based python dependency injection framework."
 license = "MIT"
 readme = "README.md"
