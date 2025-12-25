@@ -59,6 +59,9 @@ async with container.application_context() as app_container:
 > [!TIP]
 > A dependency can require other dependencies, the container will resolve the graph and raise errors if circular dependencies are found.
 
+> [!NOTE]
+> For non async code, use `container.sync_application_context`.
+
 ### In the details
 The packages provide the dependencies for the container, there are two ways of doing that.
 

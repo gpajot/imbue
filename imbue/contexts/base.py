@@ -17,7 +17,7 @@ from typing import (
 )
 
 from imbue.dependency import Dependency, SubDependency
-from imbue.providers.abstract import Provider
+from imbue.providers.abstract import AnyProviderResult, Provided, Provider
 from imbue.providers.common import get_providers
 from imbue.providers.instance import DelegatedInstanceProvider
 from imbue.utils import partial
@@ -83,11 +83,8 @@ class ContextualizedProvider(Generic[T, V]):
     def sub_dependencies(self) -> Iterator[SubDependency]:
         yield from self.provider.sub_dependencies
 
-    async def get(
-        self,
-        **dependencies: Any,
-    ) -> V | AbstractContextManager[V] | AbstractAsyncContextManager[V]:
-        return await self.provider.get(**dependencies)
+    def get(self, **dependencies: Any) -> AnyProviderResult[Provided[V]]:
+        return self.provider.get(**dependencies)
 
 
 @dataclass

@@ -2,7 +2,7 @@ from collections.abc import Callable, Iterator
 from typing import Any
 
 from imbue.dependency import SubDependency
-from imbue.providers.abstract import Provider
+from imbue.providers.abstract import Provider, ProviderResult, _ProviderResult
 from imbue.utils import get_annotations, partial
 
 
@@ -20,8 +20,8 @@ class FunctionProvider(Provider[Callable, Callable]):
             # This will be equivalent to using partial with dependencies already passed.
             yield SubDependency(name, annotation.annotation, mandatory=False)
 
-    async def get(self, **dependencies: Any) -> Callable:
-        return partial(self.interface, **dependencies)
+    def get(self, **dependencies: Any) -> ProviderResult[Callable]:
+        return _ProviderResult(partial(self.interface, **dependencies), awaitable=False)
 
 
 class MethodProvider(Provider[Callable, Callable]):
@@ -45,6 +45,9 @@ class MethodProvider(Provider[Callable, Callable]):
             # This will be equivalent to using partial with dependencies already passed.
             yield SubDependency(name, annotation.annotation, mandatory=False)
 
-    async def get(self, **dependencies: Any) -> Callable:
+    def get(self, **dependencies: Any) -> ProviderResult[Callable]:
         instance = dependencies.pop("__instance__")
-        return partial(getattr(instance, self.interface.__name__), **dependencies)  # ty: ignore[unresolved-attribute]
+        return _ProviderResult(
+            partial(getattr(instance, self.interface.__name__), **dependencies),  # ty: ignore[unresolved-attribute]
+            awaitable=False,
+        )

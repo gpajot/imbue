@@ -1,6 +1,6 @@
 [project]
 name = "imbue"
-version = "2.2.0"
+version = "2.3.0"
 description = "Type based python dependency injection framework."
 license = "MIT"
 readme = "README.md"
@@ -23,7 +23,7 @@ dev = [
     "pytest-mock ==3.15.1",
     "ruff==0.14.10",
     "pre-commit ==4.5.1",
-    "ty ==0.0.2",
+    "ty ==0.0.7",
 ]
 
 [tool.pytest.ini_options]

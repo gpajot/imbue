@@ -4,7 +4,7 @@ from dataclasses import dataclass
 from typing import cast
 
 from imbue.abstract import InternalContainer
-from imbue.contexts.application import ApplicationContainer
+from imbue.contexts.application import ApplicationContainer, SyncApplicationContainer
 from imbue.contexts.base import (
     Context,
     ContextualizedDependency,
@@ -154,6 +154,10 @@ class Container(InternalContainer):
         """Get all providers that should be eager inited for a context."""
         return iter(self._by_context_eager_providers[context])
 
-    def application_context(self) -> "ApplicationContainer":
+    def application_context(self) -> ApplicationContainer:
         """Spawns the first contextualized container on the application level."""
         return ApplicationContainer(self, {})
+
+    def sync_application_context(self) -> SyncApplicationContainer:
+        """Spawns the first contextualized container on the application level."""
+        return SyncApplicationContainer(self, {})
