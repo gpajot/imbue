@@ -14,6 +14,7 @@ from typing import (
     Any,
     Generic,
     TypeVar,
+    cast,
 )
 
 from imbue.dependency import Dependency, SubDependency
@@ -123,10 +124,10 @@ class DelegatedProviderWrapper(Generic[V]):
     ]:
         """Support for context managers."""
         if inspect.isasyncgenfunction(self.func):
-            return asynccontextmanager(self.func), True  # ty: ignore[invalid-argument-type]
+            return asynccontextmanager(self.func), True
         if inspect.isgeneratorfunction(self.func):
-            return contextmanager(self.func), True  # ty: ignore[invalid-argument-type]
-        return self.func, False  # ty: ignore[invalid-return-type]
+            return contextmanager(self.func), True
+        return cast(Callable[..., V], self.func), False
 
 
 def make_context_decorator(context: Context | None):
