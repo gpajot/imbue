@@ -71,7 +71,7 @@ def partial(func: Callable, **kwargs: Any) -> Callable:
         k: v.annotation for k, v in get_annotations(func).items() if k not in kwargs
     }
     signature = inspect.signature(func)
-    _wrapper.__signature__ = signature.replace(  # ty: ignore[unresolved-attribute]
+    _wrapper.__signature__ = signature.replace(  # ty: ignore[invalid-assignment]
         parameters=[p for p in signature.parameters.values() if p.name not in kwargs],
     )
     return _wrapper
