@@ -4,6 +4,7 @@ from typing import (
     Any,
     Generic,
     TypeVar,
+    cast,
     get_args,
 )
 
@@ -91,7 +92,10 @@ class DelegatedInstanceProvider(Provider[type[C], C], Generic[C]):
             yield SubDependency(name, annotation.annotation, annotation.mandatory)
 
     def get(self, **dependencies: Any) -> AsyncProviderResult[Provided[C]]:
-        return _ProviderResult(
-            self._provider_func(**dependencies),  # ty: ignore[invalid-argument-type]
-            awaitable=self._awaitable,
+        return cast(
+            AsyncProviderResult[Provided[C]],
+            _ProviderResult(
+                self._provider_func(**dependencies),
+                awaitable=self._awaitable,
+            ),
         )

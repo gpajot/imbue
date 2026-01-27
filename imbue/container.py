@@ -41,7 +41,7 @@ class DependencyChain:
             return
         # The deeper the chain, the lower the context must be.
         # App dependencies cannot have task dependencies but the inverse is possible.
-        if self.last.context > self.chain[-2].context:  # ty: ignore[unsupported-operator]
+        if self.last.context > self.chain[-2].context:
             raise DependencyResolutionError(f"context error:\n{self}")
 
     @property
