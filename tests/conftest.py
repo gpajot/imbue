@@ -72,7 +72,7 @@ def nested_provider():
 
 @pytest.fixture
 def interfaced_instance_provider():
-    return InterfacedInstanceProvider(Interfaced(InterfaceDep, ImplementationDep))
+    return InterfacedInstanceProvider(Interfaced(InterfaceDep, ImplementationDep))  # ty: ignore[invalid-argument-type]
 
 
 @pytest.fixture
