@@ -75,10 +75,11 @@ from imbue import Package, application_context
 
 from myapp import LoggingConfig, MyLoggerTransport, LoggerTransport, MyLogger, Logger
 
+
 class LoggingPackage(Package):
     def __init__(self, config: LoggingConfig):
         self._config = config
-        
+
     @application_context(eager=True)  # You can autoload dependencies.
     # The method should expose the interface as the type and return the implementation.
     def logger_transport(self) -> LoggerTransport:

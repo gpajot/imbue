@@ -69,7 +69,7 @@ class ContextualizedContainer(AsyncExitStack, ABC):
             },
         )
         if result.awaitable:
-            provided = await result.provided  # ty: ignore[invalid-await]
+            provided = await result.provided
         else:
             provided = result.provided
         if (
