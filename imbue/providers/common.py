@@ -17,7 +17,7 @@ from imbue.providers.instance import (
 def get_providers(dependency: Dependency) -> Iterator[Provider]:
     """Get the providers or raise if incorect type."""
     if isinstance(dependency, Interfaced):
-        yield InterfacedInstanceProvider(dependency)  # ty: ignore[invalid-argument-type]
+        yield InterfacedInstanceProvider(dependency)
     elif inspect.isclass(dependency):
         yield InstanceProvider(dependency)
     elif inspect.iscoroutinefunction(dependency) or inspect.isfunction(dependency):
