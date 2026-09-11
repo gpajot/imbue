@@ -1,5 +1,5 @@
 from abc import ABC
-from collections.abc import AsyncIterator, Iterator
+from collections.abc import AsyncGenerator, Generator
 from contextlib import asynccontextmanager, contextmanager
 from dataclasses import dataclass
 
@@ -77,7 +77,7 @@ def interfaced_instance_provider():
 
 @pytest.fixture
 def nested_generator_provider():
-    def func(standalone: StandaloneDep) -> Iterator[NestedDep]:
+    def func(standalone: StandaloneDep) -> Generator[NestedDep]:
         try:
             yield NestedDep(standalone)
         finally:
@@ -88,7 +88,7 @@ def nested_generator_provider():
 
 @pytest.fixture
 def nested_async_generator_provider():
-    async def func(standalone: StandaloneDep) -> AsyncIterator[NestedDep]:
+    async def func(standalone: StandaloneDep) -> AsyncGenerator[NestedDep]:
         try:
             yield NestedDep(standalone)
         finally:
