@@ -1,10 +1,10 @@
 [project]
 name = "imbue"
-version = "2.2.1"
+version = "2.3.0"
 description = "Type based python dependency injection framework."
 license = "MIT"
 readme = "README.md"
-requires-python = ">=3.10"
+requires-python = ">=3.11"
 authors = [
     { name = "Gabriel Pajot", email = "gab@lescactus.eu" },
 ]
@@ -42,7 +42,6 @@ unused-ignore-comment = "warn"
 
 [tool.ty.terminal]
 error-on-warning = true
-
 [build-system]
-requires = ["uv_build>=0.9.17,<0.13"]
+requires = ["uv_build>=0.13.0,<0.14"]
 build-backend = "uv_build"
