@@ -1,4 +1,4 @@
-from collections.abc import AsyncIterator, Callable
+from collections.abc import AsyncGenerator, Callable
 from contextlib import AbstractAsyncContextManager, asynccontextmanager
 from typing import Any, TypedDict
 
@@ -14,7 +14,7 @@ def app_lifespan(
     container: Container,
 ) -> Callable[[Any], AbstractAsyncContextManager[State]]:
     @asynccontextmanager
-    async def _lifespan(_) -> AsyncIterator[State]:
+    async def _lifespan(_) -> AsyncGenerator[State]:
         """Initializes the application container.
         This should be passed to the `lifespan` init parameter of FastAPI.
         For more details, see
