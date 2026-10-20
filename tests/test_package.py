@@ -16,9 +16,9 @@ class TestPackage:
     @pytest.fixture
     def package(self):
         class TheTestPackage(Package):
-            EXTRA_DEPENDENCIES: ClassVar[list[ContextualizedDependency]] = [
-                ContextualizedDependency(async_func, Context.THREAD)
-            ]
+            EXTRA_DEPENDENCIES: ClassVar = (
+                ContextualizedDependency(async_func, Context.THREAD),
+            )
 
             @thread_context
             def provide_method(self) -> StandaloneDep:
