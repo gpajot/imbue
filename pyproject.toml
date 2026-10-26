@@ -17,7 +17,7 @@ fastapi = [ "fastapi >=0.112.1,<2" ]
 
 [dependency-groups]
 dev = [
-    "httpx2 ==2.15.1",
+    "httpx2==2.16.0",
     "pytest==9.1.1",
     "pytest-asyncio==1.4.0",
     "pytest-mock==3.16.0",
