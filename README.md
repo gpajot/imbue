@@ -1,8 +1,6 @@
 # imbue
 
-[![tests](https://github.com/gpajot/imbue/actions/workflows/test.yml/badge.svg?branch=main&event=push)](https://github.com/gpajot/imbue/actions/workflows/test.yml?query=branch%3Amain+event%3Apush)
-[![PyPi](https://img.shields.io/pypi/v/imbue?label=stable)](https://pypi.org/project/imbue/)
-[![python](https://img.shields.io/pypi/pyversions/imbue)](https://pypi.org/project/imbue/)
+[![PyPI Version](https://img.shields.io/pypi/v/imbue)](https://pypi.org/project/imbue/)
 
 Type based python dependency injection framework.
 
