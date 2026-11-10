@@ -10,7 +10,7 @@ from typing import (
 
 from imbue.dependency import Interfaced, SubDependency
 from imbue.providers.abstract import (
-    AsyncProviderResult,
+    AnyProviderResult,
     Provided,
     Provider,
     ProviderResult,
@@ -91,9 +91,9 @@ class DelegatedInstanceProvider(Provider[type[C], C], Generic[C]):
         ).items():
             yield SubDependency(name, annotation.annotation, annotation.mandatory)
 
-    def get(self, **dependencies: Any) -> AsyncProviderResult[Provided[C]]:
+    def get(self, **dependencies: Any) -> AnyProviderResult[C]:
         return cast(
-            AsyncProviderResult[Provided[C]],
+            AnyProviderResult[C],
             _ProviderResult(
                 self._provider_func(**dependencies),
                 awaitable=self._awaitable,
